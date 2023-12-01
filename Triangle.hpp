@@ -13,13 +13,9 @@ class Triangle : public Graphic {
         virtual void draw() const override;
 };
 
-Triangle::Triangle(char s, int w, int h)
-: Graphic(s, w, h) {
-	if (w < h){
+Triangle::Triangle(char s, int w, int h) : Graphic(s, w, h) {
+	if (w != h && w < h){
 		throw IllegalDimension("Width must be the same as height for a triangle!");
-	}
-	if (w > h){
-		throw IllegalDimension("Height must be the same as width for a triangle!");
 	}
 	if (w <= 0){
 		throw IllegalDimension("Width must be positive!");
@@ -48,15 +44,19 @@ void Triangle::setHeight(int h) {
 	if (h <= 0){
 		throw IllegalDimension("Height must be positive!");
 	}
+	if (h != width) {
+		throw IllegalDimension("Height must be the same as width for a triangle!");
+	}
 	height = h;
-	width = h;
 }
 
 void Triangle::setWidth(int w) {
 	if (w <= 0){
 		throw IllegalDimension("Width must be positive!");
 	}
-	height = w;
+	if (w != height) {
+		throw IllegalDimension("Width must be the same as height for a triangle!");
+	}
 	width = w;
 }
 

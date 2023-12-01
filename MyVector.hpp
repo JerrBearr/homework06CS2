@@ -11,20 +11,14 @@
 #include <string>
 using namespace std;
 
-// I ususally leave the names of the variables in the definition until
-// it is time to turn it in, and clean everything up at the end
-// If you dont like the look of it in the mean time, feel free to get rid of the names
-// and only leave the types.
-
 template <typename T> class MyVector {
 private:
-	T* buffer;
 	int bufferSize;
-
+	T* buffer;
 public:
 	MyVector();
-	MyVector(int a);
-	MyVector(const MyVector& copyObj);
+	MyVector(int);
+	MyVector(const MyVector&);
 	virtual ~MyVector();
 	void add(T item);
 	T back() const;
@@ -34,30 +28,33 @@ public:
 	void reset();
 	int size() const;
 
-	MyVector<T>& operator=(const MyVector& otherObj);
-	T& operator[](int index) const;
+	// operator overloads
+	MyVector<T>& operator=(const MyVector&);
+	T& operator[](int) const;
 
 	class VectorError {
 		private:
 			string e;
 		public:
-			VectorError() : e("") { };
-			VectorError(string s) : e(s) { };
-			string what() const;
+			VectorError() : e("")
+			{ };
+			VectorError(string s) : e(s)
+			{ };
+			string what() const {
+				return e;
+			};
 	};
-
 };
 
 template<typename T>
- MyVector<T>::MyVector() {
-	bufferSize = 0;
-	buffer = new T[bufferSize];
-}
+ MyVector<T>::MyVector() : bufferSize(0), buffer(new T[bufferSize])
+{ }
 
 template<typename T>
- MyVector<T>::MyVector(int a) {
-	bufferSize = a;
-	buffer = new T[bufferSize];
+ MyVector<T>::MyVector(int a) : bufferSize(a), buffer(new T[bufferSize]) {
+	for (int i = 0; i < a; i++) {
+		buffer[i] = 0;
+	}
 }
 
 template<typename T>
@@ -71,7 +68,9 @@ MyVector<T>::MyVector(const MyVector &copyObj) {
 
 template<typename T>
  MyVector<T>::~MyVector() {
-//	delete[] buffer;
+	if (bufferSize != 0) {
+	delete[] buffer;
+	}
 }
 
 template<typename T>
@@ -104,7 +103,6 @@ int MyVector<T>::find(T item) {
     for (int i = 0; i < bufferSize; i++) {
         if (item == buffer[i]) {
             index = i;
-            cout << i << endl;
             break;
         }
     }
@@ -123,18 +121,33 @@ template<typename T>
 }
 
 template<typename T>
- void MyVector<T>::remove(T item) {
-		if (bufferSize == 0 || buffer == nullptr) {
-			throw VectorError("Vector is empty, cannot call remove(T) method!");
-		}
-		else {
-			int newBufferSize = bufferSize - 1;
-			T* newBuffer = new T[bufferSize];
-			for (int i = 0; i < newBufferSize; i++) {
-				newBuffer[i] = buffer[i];
-			}
-			newBuffer[newBufferSize - 1] = item;
-		}
+void MyVector<T>::remove(T item) {
+    if (bufferSize == 0 || buffer == nullptr) {
+        throw VectorError("Vector is empty, cannot call remove(T) method!");
+    }
+    else {
+        int indexToRemove = -1;
+        for (int i = 0; i < bufferSize; i++) {
+            if (buffer[i] == item) {
+                indexToRemove = i;
+                break;
+            }
+        }
+        if (indexToRemove != -1) {
+            T* newBuffer = new T[bufferSize - 1];
+            int newIndex = 0;
+            for (int i = 0; i < bufferSize; i++) {
+                if (i != indexToRemove) {
+                    newBuffer[newIndex++] = buffer[i];
+                }
+            }
+            delete[] buffer;
+            buffer = newBuffer;
+            bufferSize--;
+        } else {
+            throw VectorError("Item not found in vector!");
+        }
+    }
 }
 
 template<typename T>
@@ -161,22 +174,15 @@ MyVector<T>& MyVector<T>::operator =(const MyVector &otherObj) {
     return *this;
 }
 
-
 template<typename T>
  T& MyVector<T>::operator [](int index) const {
 	if (bufferSize == 0) {
 		throw VectorError("Vector is empty, cannot use [] operator!");
 	}
 	else if (index >= bufferSize) {
-		throw VectorError("Out of bounds error!");
+		throw VectorError("Given index is out of range!");
 	}
 	else return buffer[index];
 }
-
-template<typename T>
- string MyVector<T>::VectorError::what() const {
-	return e;
-}
-
 
 #endif /* MYVECTOR_HPP_ */

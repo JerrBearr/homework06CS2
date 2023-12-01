@@ -11,8 +11,7 @@ class Rectangle : public Graphic {
         virtual void draw() const override;
 };
 
-Rectangle::Rectangle(char s, int w, int h)
-: Graphic(s, w, h) {
+Rectangle::Rectangle(char s, int w, int h) : Graphic(s, w, h) {
 	if (w <= 0){
 		throw IllegalDimension("Width must be positive!");
 	}
@@ -37,5 +36,3 @@ void Rectangle::draw() const{
 }
 
 #endif
-
-

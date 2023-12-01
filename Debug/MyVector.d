@@ -1,1 +1,0 @@
-MyVector.o: ../MyVector.cpp

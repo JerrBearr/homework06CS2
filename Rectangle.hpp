@@ -1,9 +1,8 @@
-
 #ifndef RECTANGLE_HPP
 #define RECTANGLE_HPP
 
-#include "Graphic.hpp"
 #include <iostream>
+#include "Graphic.hpp"
 
 class Rectangle : public Graphic {
     public:
@@ -14,7 +13,12 @@ class Rectangle : public Graphic {
 
 Rectangle::Rectangle(char s, int w, int h)
 : Graphic(s, w, h) {
-
+	if (w <= 0){
+		throw IllegalDimension("Width must be positive!");
+	}
+	if (h <= 0){
+		throw IllegalDimension("Height must be positive!");
+	}
 }
 
 Rectangle::~Rectangle(){
@@ -22,8 +26,9 @@ Rectangle::~Rectangle(){
 }
 
 void Rectangle::draw() const{
+	cout << "Rectangle: " << endl;
 	for (int i = 0; i < height; i++) {
-		for (int j = 0;j < width; j++) {
+		for (int j = 0; j < width; j++) {
 			cout << symbol;
 		}
 		cout << endl;
@@ -32,4 +37,5 @@ void Rectangle::draw() const{
 }
 
 #endif
+
 
